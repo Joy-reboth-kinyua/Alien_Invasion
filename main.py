@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 import pygame
 import random
 import json
@@ -45,12 +47,12 @@ SCORE_FILE = "assets/high_scores.json"
 def show_startup_screen(screen):
     font = pygame.font.Font(None, 36)
     title_text = font.render("Alien Invasion", True, WHITE)
-    controls_text = font.render("Controls: Arrow keys to move, Space to shoot", True, WHITE)
+    controls_text = font.render("Controls: Arrow keys to move, Space to shoot & ESC to Quit", True, WHITE)
     start_text = font.render("Press S to Start", True, WHITE)
     screen.fill((0, 0, 0))
-    screen.blit(title_text, (WIDTH / 2 - 100, HEIGHT / 2 - 100))
-    screen.blit(controls_text, (WIDTH / 2 - 200, HEIGHT / 2 - 50))
-    screen.blit(start_text, (WIDTH / 2 - 100, HEIGHT / 2))
+    screen.blit(title_text, (WIDTH / 2 - title_text.get_width() / 2, HEIGHT / 2 - 100))
+    screen.blit(controls_text, (WIDTH / 2 - controls_text.get_width() / 2, HEIGHT / 2 - 50))
+    screen.blit(start_text, (WIDTH / 2 - start_text.get_width() / 2, HEIGHT / 2))
     pygame.display.flip()
 
     waiting = True
@@ -69,7 +71,7 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
 show_startup_screen(screen)
 
 # Initialize Pygame
-pygame.init()
+#pygame.init()
 # Load and play background music
 pygame.mixer.music.load("assets/audio/background_music.mp3")
 pygame.mixer.music.play(-1)  # -1 means the music will loop indefinitely
@@ -162,9 +164,9 @@ def show_game_over_screen(screen, score, new_high_score):
         "New High Score!" if new_high_score else "Try Again!", True, BLUE
     )
     screen.fill((0, 0, 0))
-    screen.blit(text, (WIDTH / 2 - 150, HEIGHT / 2 - 50))
-    screen.blit(retry_text, (WIDTH / 2 - 200, HEIGHT / 2))
-    screen.blit(high_score_text, (WIDTH / 2 - 100, HEIGHT / 2 + 50))
+    screen.blit(text, (WIDTH / 2 - text.get_width() / 2, HEIGHT / 2 - 50))
+    screen.blit(retry_text, (WIDTH / 2 - retry_text.get_width() / 2, HEIGHT / 2))
+    screen.blit(high_score_text, (WIDTH / 2 - high_score_text.get_width() / 2, HEIGHT / 2 + 50))
     pygame.display.flip()
 
     waiting = True
@@ -308,7 +310,7 @@ def main():
         # Check if all aliens are destroyed
         if not aliens:
             level += 1
-            aliens = [Alien(alien_image) for _ in range(5 + level * INCREASE_ALIENS_BY)]
+            aliens = [Alien(alien_image) for _ in range(INITIAL_ALIEN_POPULATION + level * INCREASE_ALIENS_BY)]
             for alien in aliens:
                 alien.speed_y += level * INCREASE_ALIEN_SPEED_BY
 
