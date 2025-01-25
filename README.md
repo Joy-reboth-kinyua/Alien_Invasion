@@ -41,6 +41,7 @@ python main.icons.py
 | Shoot       | [Sci-Fi Weapon Shoot](https://pixabay.com/sound-effects/sci-fi-weapon-shoot-firing-pulse-tm-04-233827/) |
 | Hit         | [Sci-Fi Weapon Hit](https://pixabay.com/sound-effects/sci-fi-weapon-shoot-firing-pulse-tm-01-233821/) |
 | Cinema Hit  | [Cinematic Hit](https://pixabay.com/sound-effects/cinematic-hit-159487/) |
+| Background Music | [Journey Into Space](https://pixabay.com/music/build-up-scenes-journey-into-space-235266/) |
 | Game Over   | [Game Over Sound Effect](https://pixabay.com/sound-effects/game-over-2-sound-effect-230463/) |
 
 ### Images

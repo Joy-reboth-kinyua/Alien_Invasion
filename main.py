@@ -2,13 +2,25 @@ import pygame
 import random
 import json
 import os
-
+import pygame
 # Initialize Pygame
 pygame.init()
 
-# Set up display variables
-WIDTH = 800
-HEIGHT = 600
+# Get display information
+info = pygame.display.Info()
+WIDTH = info.current_w
+HEIGHT = info.current_h
+
+# Load and play startup jingle
+pygame.mixer.music.load("assets/audio/startup_jingle.mp3")
+pygame.mixer.music.play()
+
+
+# Get display information
+info = pygame.display.Info()
+WIDTH = info.current_w
+HEIGHT = info.current_h
+
 SHIP_SIZE = 50
 BULLET_SIZE = 40
 ALIEN_SIZE = 30
@@ -30,7 +42,37 @@ BLUE = (0, 0, 255)
 # File to store high scores
 SCORE_FILE = "assets/high_scores.json"
 
+def show_startup_screen(screen):
+    font = pygame.font.Font(None, 36)
+    title_text = font.render("Alien Invasion", True, WHITE)
+    controls_text = font.render("Controls: Arrow keys to move, Space to shoot", True, WHITE)
+    start_text = font.render("Press S to Start", True, WHITE)
+    screen.fill((0, 0, 0))
+    screen.blit(title_text, (WIDTH / 2 - 100, HEIGHT / 2 - 100))
+    screen.blit(controls_text, (WIDTH / 2 - 200, HEIGHT / 2 - 50))
+    screen.blit(start_text, (WIDTH / 2 - 100, HEIGHT / 2))
+    pygame.display.flip()
 
+    waiting = True
+    while waiting:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+            elif event.type == pygame.KEYDOWN:
+                pygame.mixer.music.pause()
+                if event.key == pygame.K_s:
+                    waiting = False
+
+# Set up display
+screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
+show_startup_screen(screen)
+
+# Initialize Pygame
+pygame.init()
+# Load and play background music
+pygame.mixer.music.load("assets/audio/background_music.mp3")
+pygame.mixer.music.play(-1)  # -1 means the music will loop indefinitely
 # Ship class
 class Ship(pygame.Rect):
     def __init__(self, image):
@@ -47,7 +89,6 @@ class Ship(pygame.Rect):
     def draw(self, screen):
         screen.blit(self.image, (self.x, self.y))
 
-
 # Bullet class
 class Bullet(pygame.Rect):
     def __init__(self, x, y, image, speed=10):
@@ -60,7 +101,6 @@ class Bullet(pygame.Rect):
 
     def draw(self, screen):
         screen.blit(self.image, (self.x, self.y))
-
 
 # Alien class
 class Alien(pygame.Rect):
@@ -85,7 +125,6 @@ class Alien(pygame.Rect):
     def draw(self, screen):
         screen.blit(self.image, (self.x, self.y))
 
-
 # Power-up class
 class PowerUp(pygame.Rect):
     def __init__(self, image):
@@ -104,7 +143,6 @@ class PowerUp(pygame.Rect):
     def draw(self, screen):
         screen.blit(self.image, (self.x, self.y))
 
-
 def load_high_score():
     if os.path.exists(SCORE_FILE):
         with open(SCORE_FILE, "r") as file:
@@ -112,18 +150,16 @@ def load_high_score():
             return data.get("high_score", 0)
     return 0
 
-
 def save_high_score(score):
     with open(SCORE_FILE, "w") as file:
         json.dump({"high_score": score}, file)
-
 
 def show_game_over_screen(screen, score, new_high_score):
     font = pygame.font.Font(None, 36)
     text = font.render(f"Game Over! Final Score: {score}", True, WHITE)
     retry_text = font.render("Press R to Retry or Q to Quit", True, WHITE)
     high_score_text = font.render(
-        "New High Score!" if new_high_score else "Try Again!", True, WHITE
+        "New High Score!" if new_high_score else "Try Again!", True, BLUE
     )
     screen.fill((0, 0, 0))
     screen.blit(text, (WIDTH / 2 - 150, HEIGHT / 2 - 50))
@@ -144,10 +180,31 @@ def show_game_over_screen(screen, score, new_high_score):
                     pygame.quit()
                     exit()
 
+def show_pause_screen(screen):
+    font = pygame.font.Font(None, 36)
+    text = font.render("Game Paused", True, WHITE)
+    continue_text = font.render("Press C to Continue or Q to Quit", True, WHITE)
+    screen.fill((0, 0, 0))
+    screen.blit(text, (WIDTH / 2 - 100, HEIGHT / 2 - 50))
+    screen.blit(continue_text, (WIDTH / 2 - 200, HEIGHT / 2))
+    pygame.display.flip()
+
+    waiting = True
+    while waiting:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_c:
+                    waiting = False
+                elif event.key == pygame.K_q:
+                    pygame.quit()
+                    exit()
 
 def main():
     # Set up display
-    screen = pygame.display.set_mode((WIDTH, HEIGHT))
+    screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
     pygame.display.set_caption("Alien Invasion")
     clock = pygame.time.Clock()
 
@@ -191,6 +248,9 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    show_pause_screen(screen)
 
         # Get key presses
         keys = pygame.key.get_pressed()
@@ -304,7 +364,6 @@ def main():
 
     # Quit Pygame
     pygame.quit()
-
 
 # Main loop
 while True:
